@@ -1,27 +1,14 @@
-// Loading environment variables from .env files
-// https://docs.astro.build/en/guides/configuring-astro/#environment-variables
 import { loadEnv } from "vite";
-const {
-  PUBLIC_SANITY_PROJECT_ID,
-  PUBLIC_SANITY_DATASET,
-  PUBLIC_SANITY_STUDIO_PROJECT_ID,
-  PUBLIC_SANITY_STUDIO_DATASET,
-  PUBLIC_SANITY_STUDIO_URL,
-} = loadEnv(import.meta.env.MODE, process.cwd(), "");
 import { defineConfig } from "astro/config";
-
-const projectId = PUBLIC_SANITY_PROJECT_ID || PUBLIC_SANITY_STUDIO_PROJECT_ID;
-const dataset = PUBLIC_SANITY_DATASET || PUBLIC_SANITY_STUDIO_DATASET;
-import { defineConfig } from "astro/config";
-
-const projectId = PUBLIC_SANITY_STUDIO_PROJECT_ID;
-const dataset = PUBLIC_SANITY_STUDIO_DATASET;
-const studioUrl = PUBLIC_SANITY_STUDIO_URL || "http://localhost:3333";
-
 import sanity from "@sanity/astro";
 import react from "@astrojs/react";
-
 import tailwindcss from "@tailwindcss/vite";
+
+const env = loadEnv(import.meta.env.MODE, process.cwd(), "");
+
+const projectId = env.PUBLIC_SANITY_PROJECT_ID || env.PUBLIC_SANITY_STUDIO_PROJECT_ID;
+const dataset = env.PUBLIC_SANITY_DATASET || env.PUBLIC_SANITY_STUDIO_DATASET;
+const studioUrl = env.PUBLIC_SANITY_STUDIO_URL || "http://localhost:3333";
 
 // https://astro.build/config
 export default defineConfig({
@@ -30,15 +17,13 @@ export default defineConfig({
     sanity({
       projectId,
       dataset,
-      // studioBasePath: "/admin",
-      // Set useCdn to false if you're building statically.
       useCdn: true,
-      apiVersion: "2026-03-26", // Set to date of setup to use the latest API version
+      apiVersion: "2026-03-26",
       stega: {
         studioUrl,
       },
     }),
-    react(), // Required for Sanity Studio
+    react(),
   ],
   vite: {
     optimizeDeps: {
@@ -51,7 +36,6 @@ export default defineConfig({
         "lodash/sortedIndex.js",
       ],
     },
-
     plugins: [tailwindcss()],
   },
 });
