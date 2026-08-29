@@ -3,6 +3,7 @@ import { defineConfig } from "astro/config";
 import sanity from "@sanity/astro";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
+import netlify from "@astrojs/netlify";
 
 const env = loadEnv(import.meta.env.MODE, process.cwd(), "");
 
@@ -10,18 +11,16 @@ const projectId = env.PUBLIC_SANITY_PROJECT_ID || env.PUBLIC_SANITY_STUDIO_PROJE
 const dataset = env.PUBLIC_SANITY_DATASET || env.PUBLIC_SANITY_STUDIO_DATASET;
 const studioUrl = env.PUBLIC_SANITY_STUDIO_URL || "http://localhost:3333";
 
-// https://astro.build/config
 export default defineConfig({
-  output: "static",
+  output: "server",
+  adapter: netlify(),
   integrations: [
     sanity({
       projectId,
       dataset,
       useCdn: true,
       apiVersion: "2026-03-26",
-      stega: {
-        studioUrl,
-      },
+      stega: { studioUrl },
     }),
     react(),
   ],
